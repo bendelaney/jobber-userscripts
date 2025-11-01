@@ -28,8 +28,8 @@ More info here: [https://github.com/quoid/userscripts](https://github.com/quoid/
 ### Step 2: Create New Userscript
 #### Auto-install option:
 1. Make sure your Userscripts Extension from Step 1 is turned ON.
-2. Visit the [install link](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/jobber-keyboard-shortcuts-userscript.user.js)
-3. Click the Userscripts icon in browser - looks like **"</>"**
+2. Visit this: [install link](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/jobber-keyboard-shortcuts-userscript.user.js)
+3. _While on that page_, click the Userscripts icon in browser - looks like **"</>"**
 4. Click the **"Click to install"** link.
 
 ![Screenshot of Userscripts auto-install](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/userscripts-install.png)
