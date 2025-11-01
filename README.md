@@ -40,6 +40,8 @@ Install the [Userscripts extension](https://github.com/quoid/userscripts) for Sa
 5. Give it a name like "Jobber Keyboard Shortcuts"
 6. PASTE the contents of the script
 
+![Screenshot of manual Userscripts install](https://github.com/bendelaney/jobber-userscripts/blob/main/userscripts-install.png?raw=true)
+
 ### Step 4: Save and Enable
 1. Save the userscript
 2. Make sure it's enabled (toggle should be on)
