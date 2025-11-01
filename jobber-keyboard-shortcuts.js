@@ -1,5 +1,5 @@
-// Jobber Keyboard Shortcuts
-// Version 1.6
+// Jobber Actions Consolidated
+// Version 1.7
 // Author: Ben Delaney
 
 /* ************************
