@@ -5,18 +5,18 @@ A userscript that adds powerful keyboard shortcuts to Jobber to speed up your wo
 ## Keyboard Shortcuts
 
 ### Global Shortcuts
-- **CMD + \\** - Toggle Activity Feed side panel
-- **CMD + OPTION + \\** - Toggle Messages side panel
-- **CMD + ENTER** - Click Save Button (works in Visit Modals, Note inputs, and email forms)
+- **`CMD + \\`** - Toggle **Activity Feed** side panel
+- **`CMD + OPTION + \\`** - Toggle **Messages** side panel
+- **`CMD + ENTER`** - Click **Save** Button (works in Visit Modals, Note inputs, and email forms)
 
 ### While Viewing a Job Visit Modal
-- **CMD + CTRL + E** - Open visit Edit dialog
-- **CMD + CTRL + T** - Open Text Reminder dialog
-- **SHIFT + N** - Switch to Notes Tab
-- **SHIFT + I** - Switch to Info Tab
+- **`CMD + CTRL + E`** - Open visit **Edit** dialog
+- **`CMD + CTRL + T`** - Open **Text Reminder** dialog
+- **`SHIFT + N`** - Switch to **Notes** Tab
+- **`SHIFT + I`** - Switch to **Info** Tab
 
 ### While Editing a Job Visit
-- **CMD + CTRL + A** - Assign Crew
+- **`CMD + CTRL + A`** - **Assign** Crew
 
 ## Installation
 
