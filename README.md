@@ -19,8 +19,8 @@ A userscript that adds powerful keyboard shortcuts to Jobber to speed up your wo
 - **`CMD + CTRL + A`** - **Assign** Crew
 
 ### While on a Job Page
-- **`SHIFT + V`** - Scroll to **Visits** Card
-- **`SHIFT + N`** - Scroll to **Internal Notes** Card
+- **`SHIFT + V`** - Scroll to **Visits** section
+- **`SHIFT + N`** - Scroll to **Internal Notes** section
 
 ## Installation
 
