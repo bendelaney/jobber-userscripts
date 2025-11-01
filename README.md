@@ -18,6 +18,9 @@ A userscript that adds powerful keyboard shortcuts to Jobber to speed up your wo
 ### While Editing a Job Visit
 - **`CMD + CTRL + A`** - **Assign** Crew
 
+### While on a Job Page
+- **`SHIFT + V`** - Scroll to **Visits** Card
+
 ## Installation
 
 ### Step 1: Install Userscripts Extension for Safari
