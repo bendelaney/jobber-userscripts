@@ -21,7 +21,8 @@ While in the 'EDIT' mode of a Job Visit Modal:
  - CMD + CTRL + A : Assign Crew
 
 While on a Job page:
- - SHIFT + V : Scroll to Visits Card
+ - SHIFT + V : Scroll to Visits section
+ - SHIFT + N : Scroll to Internal Notes section
 */
 
 (function() {
@@ -542,6 +543,43 @@ While on a Job page:
         }
     }
 
+    // Function 10: Scroll to Internal Notes Card (SHIFT+N on Job page)
+    function scrollToInternalNotesCard() {
+        // Check if we're on a job page
+        const isJobPage = /\/work_orders\/\d+/.test(window.location.pathname);
+        
+        if (!isJobPage) {
+            console.log('Not on a job page, ignoring SHIFT+N');
+            return;
+        }
+
+        // Search through all card titles for "Internal notes"
+        const allTitles = document.querySelectorAll('.card-headerTitle');
+        let foundNotesTitle = null;
+        
+        for (const title of allTitles) {
+            if (normalizeText(title.textContent) === 'internal notes') {
+                foundNotesTitle = title;
+                break;
+            }
+        }
+        
+        if (!foundNotesTitle) {
+            console.log('Internal notes card not found on this page');
+            return;
+        }
+        
+        // Get the grandparent div.card
+        const notesCard = foundNotesTitle.closest('div.card');
+        
+        if (notesCard) {
+            console.log('Scrolling to Internal notes card');
+            notesCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            console.log('Could not find parent card element');
+        }
+    }
+
     // Block Escape key in Edit dialogs - using multiple event listeners for maximum coverage
     const blockEscapeInEditDialog = function(event) {
         if (event.code === 'Escape' || event.key === 'Escape' || event.keyCode === 27) {
@@ -626,17 +664,26 @@ While on a Job page:
             event.preventDefault();
             toggleActivityFeed();
         }
-        // Check for SHIFT+N (Switch to Notes Tab)
+        // Check for SHIFT+N (Switch to Notes Tab in modal OR Scroll to Internal Notes on Job page)
         else if (event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey && event.code === 'KeyN') {
-            // Only intercept if Visit or Request modal is open
+            // Check if Visit or Request modal is open first
             const title = document.querySelector('.dialog-title.js-dialogTitle');
             const titleText = normalizeText(title?.textContent || '');
             
             if (title && (titleText === 'visit' || titleText === 'request')) {
+                // We're in a modal - switch to Notes tab
                 event.preventDefault();
                 switchToNotesTab();
+            } else {
+                // Check if we're on a job page - scroll to Internal Notes
+                const isJobPage = /\/work_orders\/\d+/.test(window.location.pathname);
+                
+                if (isJobPage) {
+                    event.preventDefault();
+                    scrollToInternalNotesCard();
+                }
+                // If neither condition met, let default behavior happen (typing "N")
             }
-            // If modal is not open, let the default behavior happen (typing "N")
         }
         // Check for SHIFT+I (Switch to Info Tab)
         else if (event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey && event.code === 'KeyI') {
@@ -718,7 +765,7 @@ While on a Job page:
     console.log('- CMD+CTRL+A: Assign Crew (in Visit/Request modal)');
     console.log('- CMD+OPTION+\\: Toggle Text Message Inbox');
     console.log('- CMD+\\: Toggle Activity Feed');
-    console.log('- SHIFT+N: Switch to Notes Tab (in Visit/Request modal)');
+    console.log('- SHIFT+N: Switch to Notes Tab (in modal) OR Scroll to Internal Notes (on Job page)');
     console.log('- SHIFT+I: Switch to Info Tab (in Visit/Request modal)');
     console.log('- SHIFT+V: Scroll to Visits Card (on Job page)');
     console.log('- CMD+ENTER: Click Save Button');
