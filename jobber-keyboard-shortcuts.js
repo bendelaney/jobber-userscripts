@@ -660,17 +660,17 @@ While on a Job page:
             event.preventDefault();
             assignCrew();
         }
-        // Check for CMD+OPTION+/ (Mac) or CTRL+ALT+/ (Windows) - Message Inbox
+        // Check for CMD+OPTION+\ (Mac) or CTRL+ALT+\ (Windows) - Message Inbox
         else if (((navigator.platform.includes('Mac') && event.metaKey && event.altKey && !event.ctrlKey && !event.shiftKey) ||
                   (!navigator.platform.includes('Mac') && event.ctrlKey && event.altKey && !event.metaKey && !event.shiftKey)) &&
-                 event.code === 'Slash') {
+                 event.code === 'Backslash') {
             event.preventDefault();
             toggleMessageInbox();
         }
-        // Check for CMD+/ (Mac) or CTRL+/ (Windows) - Activity Feed
+        // Check for CMD+\ (Mac) or CTRL+\ (Windows) - Activity Feed
         else if (((navigator.platform.includes('Mac') && event.metaKey && !event.altKey && !event.ctrlKey && !event.shiftKey) ||
                   (!navigator.platform.includes('Mac') && event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey)) &&
-                 event.code === 'Slash') {
+                 event.code === 'Backslash') {
             event.preventDefault();
             toggleActivityFeed();
         }
