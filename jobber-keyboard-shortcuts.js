@@ -32,21 +32,23 @@ While on a Job page:
     // Utility function to normalize text
     const normalizeText = (s) => (s || '').trim().toLowerCase();
 
+    const isMac = navigator.platform.includes('Mac');
+
     const shortcutSections = [
         {
             title: 'Global',
             shortcuts: [
-                { combo: 'CMD + \\ / CTRL + \\', description: "Toggle 'Activity Feed' side panel" },
-                { combo: 'CMD + OPTION + \\ / CTRL + ALT + \\', description: "Toggle 'Messages' side panel" },
-                { combo: 'CMD + ENTER / CTRL + ENTER', description: 'Click Save button in visit modals, notes, or email forms' },
-                { combo: 'CMD + ? / CTRL + ?', description: 'Show this shortcuts reference' }
+                { combo: isMac ? 'COMMAND + \\' : 'CTRL + \\', description: "Toggle 'Activity Feed' side panel" },
+                { combo: isMac ? 'COMMAND + OPTION + \\' : 'CTRL + ALT + \\', description: "Toggle 'Messages' side panel" },
+                { combo: isMac ? 'COMMAND + ENTER' : 'CTRL + ENTER', description: 'Click Save button in visit modals, notes, or email forms' },
+                { combo: isMac ? 'COMMAND + ?' : 'CTRL + ?', description: 'Show this shortcuts reference' }
             ]
         },
         {
             title: 'Visit / Request Modals',
             shortcuts: [
-                { combo: 'CMD + CTRL + E / CTRL + E', description: 'Open visit Edit dialog' },
-                { combo: 'CMD + CTRL + T / CTRL + T', description: 'Open Text Reminder dialog' },
+                { combo: isMac ? 'COMMAND + CTRL + E' : 'CTRL + E', description: 'Open visit Edit dialog' },
+                { combo: isMac ? 'COMMAND + CTRL + T' : 'CTRL + T', description: 'Open Text Reminder dialog' },
                 { combo: 'SHIFT + N', description: 'Switch to Notes tab' },
                 { combo: 'SHIFT + I', description: 'Switch to Info tab' }
             ]
@@ -54,7 +56,7 @@ While on a Job page:
         {
             title: 'Visit Edit Mode',
             shortcuts: [
-                { combo: 'CMD + CTRL + A / CTRL + A', description: 'Assign crew' }
+                { combo: isMac ? 'COMMAND + CTRL + A' : 'CTRL + A', description: 'Assign crew' }
             ]
         },
         {
@@ -150,7 +152,7 @@ While on a Job page:
         ].join(';');
 
         const subtitle = document.createElement('p');
-        subtitle.textContent = 'Press CMD + ? or CTRL + ? again to close';
+        subtitle.innerHTML = '<a href="https://github.com/bendelaney/jobber-keyboard-shortcuts" target="_blank" rel="noopener">more info</a>';
         subtitle.style.cssText = [
             'margin: 0 0 20px',
             'color: #4b5563',
@@ -893,9 +895,8 @@ While on a Job page:
             return;
         }
 
-        const isMac = navigator.platform.includes('Mac');
-        const slashPressed = event.code === 'Slash';
-        const wantsShortcutsModal = slashPressed && !event.altKey && ((isMac && event.metaKey) || (!isMac && event.ctrlKey));
+        const slashPressed = event.code === 'Slash' || event.key === '/' || event.key === '?';
+        const wantsShortcutsModal = slashPressed && ((isMac && event.metaKey && !event.ctrlKey && !event.altKey) || (!isMac && event.ctrlKey && !event.altKey && !event.metaKey));
 
         if (wantsShortcutsModal) {
             suppressSlashSearch = true;
@@ -1119,18 +1120,19 @@ While on a Job page:
         }
     }, { capture: true });
 
-    const isMac = navigator.platform.includes('Mac');
-    const cmdKey = isMac ? 'CMD' : 'CTRL';
-    const optKey = isMac ? 'OPTION' : 'ALT';
-
-    console.log('Jobber Actions Userscript loaded with keyboard shortcuts:');
-    console.log(`- ${cmdKey}+CTRL+E: Open Edit Dialog`);
-    console.log(`- ${cmdKey}+CTRL+T: Open Text Reminder Dialog`);
-    console.log(`- ${cmdKey}+CTRL+A: Assign Crew (in Visit/Request modal)`);
-    console.log(`- ${cmdKey}+${optKey}+\\: Toggle Text Message Inbox`);
-    console.log(`- ${cmdKey}+\\: Toggle Activity Feed`);
+    console.log('========================================');
+    console.log('✅ JOBBER SHORTCUTS LOADED SUCCESSFULLY!');
+    console.log('========================================');
+    console.log('Available shortcuts:');
+    console.log('- CMD+CTRL+E: Open Edit Dialog');
+    console.log('- CMD+CTRL+T: Open Text Reminder Dialog');
+    console.log('- CMD+CTRL+A: Assign Crew (in Visit/Request modal)');
+    console.log('- CMD+?: Show shortcuts help modal');
+    console.log('- CMD+OPTION+\\: Toggle Text Message Inbox');
+    console.log('- CMD+\\: Toggle Activity Feed');
     console.log('- SHIFT+N: Switch to Notes Tab (in modal) OR Scroll to Internal Notes (on Job page)');
     console.log('- SHIFT+I: Switch to Info Tab (in Visit/Request modal)');
     console.log('- SHIFT+V: Scroll to Visits Card (on Job page)');
-    console.log(`- ${cmdKey}+ENTER: Click Save Button`);
+    console.log('- CMD+ENTER: Click Save Button');
+    console.log('========================================');
 })();
