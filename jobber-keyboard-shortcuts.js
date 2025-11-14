@@ -60,9 +60,9 @@ While on a Job page:
             ]
         },
         {
-            title: 'Job Page',
+            title: 'Job / Invoice / Quote Pages',
             shortcuts: [
-                { combo: 'SHIFT + V', description: 'Scroll to Visits section' },
+                { combo: 'SHIFT + V', description: 'Scroll to Visits section (Job pages only)' },
                 { combo: 'SHIFT + N', description: 'Scroll to Internal Notes section' }
             ]
         }
