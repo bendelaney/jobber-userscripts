@@ -822,13 +822,13 @@ While on a Job page:
         }
     }
 
-    // Function 10: Scroll to Internal Notes Card (SHIFT+N on Job page)
+    // Function 10: Scroll to Internal Notes Card (SHIFT+N on Job/Invoice/Quote page)
     function scrollToInternalNotesCard() {
-        // Check if we're on a job page
-        const isJobPage = /\/work_orders\/\d+/.test(window.location.pathname);
+        // Check if we're on a job, invoice, or quote page
+        const isOnSupportedPage = /\/(work_orders|invoices|quotes)\/\d+/.test(window.location.pathname);
         
-        if (!isJobPage) {
-            console.log('Not on a job page, ignoring SHIFT+N');
+        if (!isOnSupportedPage) {
+            console.log('Not on a job, invoice, or quote page, ignoring SHIFT+N');
             return;
         }
 
