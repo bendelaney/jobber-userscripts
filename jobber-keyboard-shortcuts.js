@@ -7,19 +7,19 @@ KEYBOARD SHORTCUTS:
 **************************
 
 Global:
-- CMD + \ (Mac) or CTRL + \ (Windows) : Toggle 'Activity Feed' side panel
-- CMD + OPTION + \ (Mac) or CTRL + ALT + \ (Windows) : Toggle 'Messages' side panel
-- CMD + ENTER (Mac) or CTRL + ENTER (Windows) : Click Save Button (while in any Visit Modal, Note input, or email form.)
-- CMD + ? (Mac) or CTRL + ? (Windows) : Show keyboard shortcuts reference
+- CMD + \ : Toggle 'Activity Feed' side panel
+- CMD + OPTION + \ : Toggle 'Messages' side panel
+- CMD + ENTER : Click Save Button (while in any Visit Modal, Note input, or email form.)
+- CMD + / : Show keyboard shortcuts reference
 
 While viewing a JOB VISIT Modal:
- - CMD + CTRL + E (Mac) or CTRL + E (Windows) : Open visit Edit dialog
- - CMD + CTRL + T (Mac) or CTRL + T (Windows) : Open Text Reminder dialog
+ - CMD + CTRL + E : Open visit Edit dialog
+ - CMD + CTRL + T : Open Text Reminder dialog
  - SHIFT + N : Switch to Notes Tab
  - SHIFT + I : Switch to Info Tab
 
 While in the 'EDIT' mode of a Job Visit Modal:
- - CMD + CTRL + A (Mac) or CTRL + A (Windows) : Assign Crew
+ - CMD + CTRL + A : Assign Crew
 
 While on a Job page:
  - SHIFT + V : Scroll to Visits section
@@ -31,10 +31,101 @@ While on Job, Invoice, or Quote pages:
 (function() {
     'use strict';
 
+    // ========================================
+    // UTILITY FUNCTIONS
+    // ========================================
+
     // Utility function to normalize text
     const normalizeText = (s) => (s || '').trim().toLowerCase();
 
     const isMac = navigator.platform.includes('Mac');
+
+    // Check if user is currently typing in an input field
+    const isUserTyping = () => {
+        const activeElement = document.activeElement;
+        return activeElement && (
+            activeElement.tagName === 'INPUT' ||
+            activeElement.tagName === 'TEXTAREA' ||
+            activeElement.tagName === 'SELECT' ||
+            activeElement.isContentEditable
+        );
+    };
+
+    // Get visit/request dialog information
+    const getVisitRequestDialog = () => {
+        const title = document.querySelector('.dialog-title.js-dialogTitle');
+        const titleText = normalizeText(title?.textContent || '');
+        const isValid = title && (titleText === 'visit' || titleText === 'request');
+        const dialog = title?.closest('[role="dialog"],.dialog-box,.modal') || document;
+        return { title, titleText, isValid, dialog };
+    };
+
+    // Scroll to a card by its title
+    const scrollToCardByTitle = (cardTitle, pagePathRegex) => {
+        // Check if we're on a supported page
+        if (pagePathRegex && !pagePathRegex.test(window.location.pathname)) {
+            console.log(`Not on a supported page for scrolling to ${cardTitle}`);
+            return;
+        }
+
+        // Search through all card titles
+        const allTitles = document.querySelectorAll('.card-headerTitle');
+        let foundTitle = null;
+
+        for (const title of allTitles) {
+            if (normalizeText(title.textContent) === normalizeText(cardTitle)) {
+                foundTitle = title;
+                break;
+            }
+        }
+
+        if (!foundTitle) {
+            console.log(`${cardTitle} card not found on this page`);
+            return;
+        }
+
+        // Get the parent div.card
+        const card = foundTitle.closest('div.card');
+
+        if (card) {
+            console.log(`Scrolling to ${cardTitle} card`);
+            card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            console.log('Could not find parent card element');
+        }
+    };
+
+    // Create fetch with Jobber headers
+    const jobberFetch = (url) => {
+        const token = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
+
+        return fetch(url, {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': '*/*;q=0.5, text/javascript, application/javascript, application/ecmascript, application/x-ecmascript',
+                'X-Requested-With': 'XMLHttpRequest',
+                ...(token ? {'X-CSRF-Token': token} : {})
+            }
+        });
+    };
+
+    // Check if modifier combo matches (platform-aware)
+    const isModifierCombo = (event, combo) => {
+        const combos = {
+            'cmd+ctrl': isMac ?
+                (event.metaKey && event.ctrlKey && !event.altKey && !event.shiftKey) :
+                (event.ctrlKey && event.altKey && !event.metaKey && !event.shiftKey),
+            'cmd+alt': isMac ?
+                (event.metaKey && event.altKey && !event.ctrlKey && !event.shiftKey) :
+                (event.ctrlKey && event.altKey && !event.metaKey && !event.shiftKey),
+            'cmd': isMac ?
+                (event.metaKey && !event.altKey && !event.ctrlKey && !event.shiftKey) :
+                (event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey),
+            'shift': event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey
+        };
+        return combos[combo] || false;
+    };
 
     const shortcutSections = [
         {
@@ -43,14 +134,14 @@ While on Job, Invoice, or Quote pages:
                 { combo: isMac ? 'COMMAND + \\' : 'CTRL + \\', description: "Toggle 'Activity Feed' side panel" },
                 { combo: isMac ? 'COMMAND + OPTION + \\' : 'CTRL + ALT + \\', description: "Toggle 'Messages' side panel" },
                 { combo: isMac ? 'COMMAND + ENTER' : 'CTRL + ENTER', description: 'Click Save button in visit modals, notes, or email forms' },
-                { combo: isMac ? 'COMMAND + ?' : 'CTRL + ?', description: 'Show this shortcuts reference' }
+                { combo: isMac ? 'COMMAND + /' : 'CTRL + /', description: 'Show this shortcuts reference' }
             ]
         },
         {
             title: 'Visit / Request Modals',
             shortcuts: [
-                { combo: isMac ? 'COMMAND + CTRL + E' : 'CTRL + E', description: 'Open visit Edit dialog' },
-                { combo: isMac ? 'COMMAND + CTRL + T' : 'CTRL + T', description: 'Open Text Reminder dialog' },
+                { combo: isMac ? 'COMMAND + CTRL + E' : 'CTRL + ALT + E', description: 'Open visit Edit dialog' },
+                { combo: isMac ? 'COMMAND + CTRL + T' : 'CTRL + ALT + T', description: 'Open Text Reminder dialog' },
                 { combo: 'SHIFT + N', description: 'Switch to Notes tab' },
                 { combo: 'SHIFT + I', description: 'Switch to Info tab' }
             ]
@@ -58,7 +149,7 @@ While on Job, Invoice, or Quote pages:
         {
             title: 'Visit Edit Mode',
             shortcuts: [
-                { combo: isMac ? 'COMMAND + CTRL + A' : 'CTRL + A', description: 'Assign crew' }
+                { combo: isMac ? 'COMMAND + CTRL + A' : 'CTRL + ALT + A', description: 'Assign crew' }
             ]
         },
         {
@@ -292,18 +383,20 @@ While on Job, Invoice, or Quote pages:
 
     const isShortcutsModalVisible = () => shortcutsOverlay && shortcutsOverlay.style.display === 'flex';
 
-    // Function 1: Open Edit Dialog (CMD+CTRL+E)
-    function openEditDialog() {
+    // ========================================
+    // SHARED DIALOG OPENER
+    // ========================================
+
+    // Generic function to open action dialogs (Edit, Text Reminder, etc.)
+    function openActionDialog(actionType, searchCriteria) {
         try {
-            const title = document.querySelector('.dialog-title.js-dialogTitle');
-            const titleText = normalizeText(title?.textContent || '');
-            
-            if (!title || (titleText !== 'visit' && titleText !== 'request')) {
+            const { isValid, dialog } = getVisitRequestDialog();
+
+            if (!isValid) {
                 alert('Open the Visit or Request modal first.');
                 return;
             }
 
-            const dialog = title.closest('[role="dialog"],.dialog-box,.modal') || document;
             const button = dialog.querySelector('button[data-action-button="true"].js-dropdownButton,button.js-dropdownButton[data-action-button="true"]') ||
                           dialog.querySelector('button.js-dropdownButton,button[aria-haspopup="true"]');
 
@@ -319,7 +412,7 @@ While on Job, Invoice, or Quote pages:
             }
 
             rawActions = rawActions.replace(/&quot;/g, '"').replace(/&amp;/g, '&');
-            
+
             let actionsArray;
             try {
                 actionsArray = JSON.parse(rawActions);
@@ -328,100 +421,7 @@ While on Job, Invoice, or Quote pages:
                 return;
             }
 
-            let editHref = null;
-            for (const html of actionsArray) {
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = html;
-                const anchor = tempDiv.querySelector('a');
-                const text = normalizeText(tempDiv.textContent);
-                
-                if (anchor && (text.includes('edit') || /\/edit\.dialog\b/.test(anchor.getAttribute('href') || ''))) {
-                    editHref = anchor.getAttribute('href');
-                    break;
-                }
-            }
-
-            if (!editHref) {
-                alert('Edit action not found in actions.');
-                return;
-            }
-
-            const token = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
-            
-            fetch(editHref, {
-                method: 'GET',
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': '*/*;q=0.5, text/javascript, application/javascript, application/ecmascript, application/x-ecmascript',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    ...(token ? {'X-CSRF-Token': token} : {})
-                }
-            })
-            .then(response => response.ok ? response.text() : response.text().then(text => {
-                throw new Error(`HTTP ${response.status} ${response.statusText} :: ${text.slice(0, 200)}`);
-            }))
-            .then(js => {
-                try {
-                    // Check if dialogBox is available before executing
-                    const parentWindow = parent.window || window;
-                    if (typeof parentWindow.dialogBox === 'undefined') {
-                        throw new Error('dialogBox constructor not available. Page may not be fully loaded.');
-                    }
-                    new Function(js)();
-                } catch (execError) {
-                    // Fallback: try direct navigation if script execution fails
-                    console.warn('Script execution failed, attempting direct navigation:', execError);
-                    window.location.href = editHref;
-                }
-            })
-            .catch(error => {
-                console.error(error);
-                alert('Could not open Edit: ' + error.message);
-            });
-
-        } catch (error) {
-            console.error(error);
-            alert('Bookmarklet error: ' + error.message);
-        }
-    }
-
-    // Function 2: Open Text Reminder Dialog (CMD+CTRL+T)
-    function openTextReminderDialog() {
-        try {
-            const title = document.querySelector('.dialog-title.js-dialogTitle');
-            const titleText = normalizeText(title?.textContent || '');
-            
-            if (!title || (titleText !== 'visit' && titleText !== 'request')) {
-                alert('Open the Visit or Request modal first.');
-                return;
-            }
-
-            const dialog = title.closest('[role="dialog"],.dialog-box,.modal') || document;
-            const button = dialog.querySelector('button[data-action-button="true"].js-dropdownButton,button.js-dropdownButton[data-action-button="true"]') ||
-                          dialog.querySelector('button.js-dropdownButton,button[aria-haspopup="true"]');
-
-            if (!button) {
-                alert('More Actions button not found.');
-                return;
-            }
-
-            let rawActions = button.getAttribute('data-action-button-actions');
-            if (!rawActions) {
-                alert('No actions found on button.');
-                return;
-            }
-
-            rawActions = rawActions.replace(/&quot;/g, '"').replace(/&amp;/g, '&');
-            
-            let actionsArray;
-            try {
-                actionsArray = JSON.parse(rawActions);
-            } catch (e) {
-                alert('Could not parse actions JSON.');
-                return;
-            }
-
-            let smsHref = null;
+            let actionHref = null;
             for (const html of actionsArray) {
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = html;
@@ -429,64 +429,60 @@ While on Job, Invoice, or Quote pages:
                 const text = normalizeText(tempDiv.textContent);
                 const href = (anchor && anchor.getAttribute('href')) || '';
                 const id = (anchor && anchor.id) || '';
-                
-                // Note: The original bookmarklet searches for 'text%20reminder' (URL encoded)
-                // but we need to check for 'text reminder' in the decoded text
-                if (anchor && (id === 'sms' || text.includes('text reminder') || /\/comms\/sms\.dialog\b/.test(href))) {
-                    smsHref = href;
+
+                if (anchor && searchCriteria(text, href, id)) {
+                    actionHref = href;
                     break;
                 }
             }
 
-            if (!smsHref) {
-                // Debug: Let's see what actions are actually available
+            if (!actionHref) {
                 console.log('Available actions:', actionsArray);
-                actionsArray.forEach((html, index) => {
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = html;
-                    const anchor = tempDiv.querySelector('a');
-                });
-                alert('Text Reminder action not found.');
+                alert(`${actionType} action not found.`);
                 return;
             }
 
-            const token = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
-            
-            fetch(smsHref, {
-                method: 'GET',
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': '*/*;q=0.5, text/javascript, application/javascript, application/ecmascript, application/x-ecmascript',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    ...(token ? {'X-CSRF-Token': token} : {})
-                }
-            })
-            .then(response => response.ok ? response.text() : response.text().then(text => {
-                throw new Error(`HTTP ${response.status} ${response.statusText} :: ${text.slice(0, 200)}`);
-            }))
-            .then(js => {
-                try {
-                    // Check if dialogBox is available before executing
-                    const parentWindow = parent.window || window;
-                    if (typeof parentWindow.dialogBox === 'undefined') {
-                        throw new Error('dialogBox constructor not available. Page may not be fully loaded.');
+            jobberFetch(actionHref)
+                .then(response => response.ok ? response.text() : response.text().then(text => {
+                    throw new Error(`HTTP ${response.status} ${response.statusText} :: ${text.slice(0, 200)}`);
+                }))
+                .then(js => {
+                    try {
+                        // Check if dialogBox is available before executing
+                        const parentWindow = parent.window || window;
+                        if (typeof parentWindow.dialogBox === 'undefined') {
+                            throw new Error('dialogBox constructor not available. Page may not be fully loaded.');
+                        }
+                        new Function(js)();
+                    } catch (execError) {
+                        // Fallback: try direct navigation if script execution fails
+                        console.warn('Script execution failed, attempting direct navigation:', execError);
+                        window.location.href = actionHref;
                     }
-                    new Function(js)();
-                } catch (execError) {
-                    // Fallback: try direct navigation if script execution fails
-                    console.warn('Script execution failed, attempting direct navigation:', execError);
-                    window.location.href = smsHref;
-                }
-            })
-            .catch(error => {
-                console.error(error);
-                alert('Could not open Text Reminder: ' + error.message);
-            });
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert(`Could not open ${actionType}: ` + error.message);
+                });
 
         } catch (error) {
             console.error(error);
             alert('Bookmarklet error: ' + error.message);
         }
+    }
+
+    // Function 1: Open Edit Dialog (CMD+CTRL+E)
+    function openEditDialog() {
+        openActionDialog('Edit', (text, href, id) => {
+            return text.includes('edit') || /\/edit\.dialog\b/.test(href);
+        });
+    }
+
+    // Function 2: Open Text Reminder Dialog (CMD+CTRL+T)
+    function openTextReminderDialog() {
+        openActionDialog('Text Reminder', (text, href, id) => {
+            return id === 'sms' || text.includes('text reminder') || /\/comms\/sms\.dialog\b/.test(href);
+        });
     }
 
     // Function 3: Click Save Button (CMD+ENTER)
@@ -630,7 +626,8 @@ While on Job, Invoice, or Quote pages:
 
     // Function 4: Toggle Text Message Inbox (CMD+OPTION+\)
     function toggleMessageInbox() {
-        const messageButton = document.querySelector('button[aria-label="Open Text Message Inbox"]');
+        const messageButton = document.querySelector('button[aria-label="Open Text Message Inbox"]') || 
+                              document.querySelector('button[aria-label="Open Message Center"]');
         
         if (messageButton) {
             console.log('Text message inbox button found, clicking...');
@@ -642,8 +639,9 @@ While on Job, Invoice, or Quote pages:
 
     // Function 5: Toggle Activity Feed (CMD+\)
     function toggleActivityFeed() {
-        const activityButton = document.querySelector('#js-openNotifications');
-        
+        const activityButton = document.querySelector('#js-openNotifications') ||
+                               document.querySelector('button[aria-label="Open Activity Feed"]');
+
         if (activityButton) {
             console.log('Activity feed button found, clicking...');
             activityButton.click();
@@ -655,17 +653,15 @@ While on Job, Invoice, or Quote pages:
     // Function 6: Switch to Notes Tab (SHIFT+N)
     function switchToNotesTab() {
         try {
-            const title = document.querySelector('.dialog-title.js-dialogTitle');
-            const titleText = normalizeText(title?.textContent || '');
-            
-            if (!title || (titleText !== 'visit' && titleText !== 'request')) {
+            const { isValid, dialog } = getVisitRequestDialog();
+
+            if (!isValid) {
                 alert('Open the Visit or Request modal first.');
                 return;
             }
 
-            const dialog = title.closest('[role="dialog"],.dialog-box,.modal') || document;
             const notesTab = dialog.querySelector('tab-bar-tab[data-target=".js-notesSection"]');
-            
+
             if (!notesTab) {
                 alert('Notes tab not found.');
                 return;
@@ -737,17 +733,15 @@ While on Job, Invoice, or Quote pages:
     // Function 8: Switch to Info Tab (SHIFT+I)
     function switchToInfoTab() {
         try {
-            const title = document.querySelector('.dialog-title.js-dialogTitle');
-            const titleText = normalizeText(title?.textContent || '');
-            
-            if (!title || (titleText !== 'visit' && titleText !== 'request')) {
+            const { isValid, dialog } = getVisitRequestDialog();
+
+            if (!isValid) {
                 alert('Open the Visit or Request modal first.');
                 return;
             }
 
-            const dialog = title.closest('[role="dialog"],.dialog-box,.modal') || document;
             const infoTab = dialog.querySelector('tab-bar-tab[data-target=".js-infoSection"]');
-            
+
             if (!infoTab) {
                 alert('Info tab not found.');
                 return;
@@ -764,92 +758,12 @@ While on Job, Invoice, or Quote pages:
 
     // Function 9: Scroll to Visits Card (SHIFT+V)
     function scrollToVisitsCard() {
-        // Check if we're on a job page
-        const isJobPage = /\/work_orders\/\d+/.test(window.location.pathname);
-        
-        if (!isJobPage) {
-            console.log('Not on a job page, ignoring SHIFT+V');
-            return;
-        }
-
-        // Find the "Visits" card header title
-        const visitsTitle = document.querySelector('.card-headerTitle');
-        
-        // Check if it's actually the Visits title
-        if (!visitsTitle || normalizeText(visitsTitle.textContent) !== 'visits') {
-            // If first one isn't Visits, search through all card titles
-            const allTitles = document.querySelectorAll('.card-headerTitle');
-            let foundVisitsTitle = null;
-            
-            for (const title of allTitles) {
-                if (normalizeText(title.textContent) === 'visits') {
-                    foundVisitsTitle = title;
-                    break;
-                }
-            }
-            
-            if (!foundVisitsTitle) {
-                console.log('Visits card not found on this page');
-                return;
-            }
-            
-            // Get the grandparent div.card
-            const visitsCard = foundVisitsTitle.closest('div.card');
-            
-            if (visitsCard) {
-                console.log('Scrolling to Visits card');
-                visitsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            } else {
-                console.log('Could not find parent card element');
-            }
-        } else {
-            // Get the grandparent div.card
-            const visitsCard = visitsTitle.closest('div.card');
-            
-            if (visitsCard) {
-                console.log('Scrolling to Visits card');
-                visitsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            } else {
-                console.log('Could not find parent card element');
-            }
-        }
+        scrollToCardByTitle('Visits', /\/work_orders\/\d+/);
     }
 
     // Function 10: Scroll to Internal Notes Card (SHIFT+N on Job/Invoice/Quote page)
     function scrollToInternalNotesCard() {
-        // Check if we're on a job, invoice, or quote page
-        const isOnSupportedPage = /\/(work_orders|invoices|quotes)\/\d+/.test(window.location.pathname);
-        
-        if (!isOnSupportedPage) {
-            console.log('Not on a job, invoice, or quote page, ignoring SHIFT+N');
-            return;
-        }
-
-        // Search through all card titles for "Internal notes"
-        const allTitles = document.querySelectorAll('.card-headerTitle');
-        let foundNotesTitle = null;
-        
-        for (const title of allTitles) {
-            if (normalizeText(title.textContent) === 'internal notes') {
-                foundNotesTitle = title;
-                break;
-            }
-        }
-        
-        if (!foundNotesTitle) {
-            console.log('Internal notes card not found on this page');
-            return;
-        }
-        
-        // Get the grandparent div.card
-        const notesCard = foundNotesTitle.closest('div.card');
-        
-        if (notesCard) {
-            console.log('Scrolling to Internal notes card');
-            notesCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } else {
-            console.log('Could not find parent card element');
-        }
+        scrollToCardByTitle('Internal notes', /\/(work_orders|invoices|quotes)\/\d+/);
     }
 
     // Block Escape key in Edit dialogs - using multiple event listeners for maximum coverage
@@ -876,31 +790,46 @@ While on Job, Invoice, or Quote pages:
     document.addEventListener('keyup', blockEscapeInEditDialog, true);
     document.addEventListener('keypress', blockEscapeInEditDialog, true);
 
-    // Keyboard event listener with capture to intercept early
-    let suppressSlashSearch = false;
+    // Keyboard event listener with capture to intercept early - VERY aggressive capture
+    // Ultra-aggressive event handler for ALL phases
+    const captureShortcutModal = (event) => {
+        // DEBUG: Log ALL keys to see what's happening
+        console.log('KEY PRESS:', {
+            type: event.type,
+            key: event.key,
+            code: event.code,
+            metaKey: event.metaKey,
+            ctrlKey: event.ctrlKey,
+            altKey: event.altKey,
+            shiftKey: event.shiftKey
+        });
 
-    const swallowSlashEvent = (event) => {
-        if (!suppressSlashSearch) {
-            return;
-        }
+        const slashPressed = event.code === 'Slash' || event.key === '/' || event.key === '?';
 
-        const slashKey = event.code === 'Slash' || event.key === '/' || event.key === '?';
-        if (!slashKey) {
-            return;
-        }
+        // On Mac: CMD+/
+        // On Windows: CTRL+/
+        const wantsShortcutsModal = slashPressed && ((isMac && event.metaKey && !event.ctrlKey && !event.altKey) || (!isMac && event.ctrlKey && !event.altKey && !event.metaKey));
 
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
+        if (wantsShortcutsModal) {
+            console.log('✅ Shortcuts modal triggered!', event.type);
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
 
-        if (event.type === 'keyup') {
-            suppressSlashSearch = false;
+            // Only toggle on keydown to avoid multiple triggers
+            if (event.type === 'keydown') {
+                toggleShortcutsModal();
+            }
+            return false;
         }
     };
 
-    document.addEventListener('keypress', swallowSlashEvent, true);
-    document.addEventListener('keyup', swallowSlashEvent, true);
+    // Add listeners on ALL event types and phases to catch before Jobber does
+    document.addEventListener('keydown', captureShortcutModal, true);
+    document.addEventListener('keypress', captureShortcutModal, true);
+    document.addEventListener('keyup', captureShortcutModal, true);
 
+    // Main keyboard event handler
     document.addEventListener('keydown', function(event) {
         if (isShortcutsModalVisible() && (event.key === 'Escape' || event.code === 'Escape')) {
             event.preventDefault();
@@ -909,18 +838,14 @@ While on Job, Invoice, or Quote pages:
         }
 
         const slashPressed = event.code === 'Slash' || event.key === '/' || event.key === '?';
+        // On Mac: CMD+/
+        // On Windows: CTRL+/
         const wantsShortcutsModal = slashPressed && ((isMac && event.metaKey && !event.ctrlKey && !event.altKey) || (!isMac && event.ctrlKey && !event.altKey && !event.metaKey));
 
         if (wantsShortcutsModal) {
-            suppressSlashSearch = true;
-            event.preventDefault();
-            event.stopPropagation();
-            event.stopImmediatePropagation();
-            toggleShortcutsModal();
+            // Already handled above
             return;
         }
-
-        suppressSlashSearch = false;
 
         // Debug all ENTER key presses
         if (event.code === 'Enter') {
@@ -959,69 +884,48 @@ While on Job, Invoice, or Quote pages:
         }
         
         // Check for CMD+CTRL+E (Mac) or CTRL+ALT+E (Windows) - Edit
-        if (((navigator.platform.includes('Mac') && event.metaKey && event.ctrlKey && !event.altKey && !event.shiftKey) ||
-             (!navigator.platform.includes('Mac') && event.ctrlKey && event.altKey && !event.metaKey && !event.shiftKey)) &&
-            event.code === 'KeyE') {
+        if (isModifierCombo(event, 'cmd+ctrl') && event.code === 'KeyE') {
             event.preventDefault();
             openEditDialog();
         }
         // Check for CMD+CTRL+T (Mac) or CTRL+ALT+T (Windows) - Text Reminder
-        else if (((navigator.platform.includes('Mac') && event.metaKey && event.ctrlKey && !event.altKey && !event.shiftKey) ||
-                  (!navigator.platform.includes('Mac') && event.ctrlKey && event.altKey && !event.metaKey && !event.shiftKey)) &&
-                 event.code === 'KeyT') {
+        else if (isModifierCombo(event, 'cmd+ctrl') && event.code === 'KeyT') {
             event.preventDefault();
             openTextReminderDialog();
         }
         // Check for CMD+CTRL+A (Mac) or CTRL+ALT+A (Windows) - Assign Crew
-        else if (((navigator.platform.includes('Mac') && event.metaKey && event.ctrlKey && !event.altKey && !event.shiftKey) ||
-                  (!navigator.platform.includes('Mac') && event.ctrlKey && event.altKey && !event.metaKey && !event.shiftKey)) &&
-                 event.code === 'KeyA') {
+        else if (isModifierCombo(event, 'cmd+ctrl') && event.code === 'KeyA') {
             event.preventDefault();
             assignCrew();
         }
         // Check for CMD+OPTION+\ (Mac) or CTRL+ALT+\ (Windows) - Message Inbox
-        else if (((navigator.platform.includes('Mac') && event.metaKey && event.altKey && !event.ctrlKey && !event.shiftKey) ||
-                  (!navigator.platform.includes('Mac') && event.ctrlKey && event.altKey && !event.metaKey && !event.shiftKey)) &&
-                 event.code === 'Backslash') {
+        else if (isModifierCombo(event, 'cmd+alt') && event.code === 'Backslash') {
             event.preventDefault();
             toggleMessageInbox();
         }
         // Check for CMD+\ (Mac) or CTRL+\ (Windows) - Activity Feed
-        else if (((navigator.platform.includes('Mac') && event.metaKey && !event.altKey && !event.ctrlKey && !event.shiftKey) ||
-                  (!navigator.platform.includes('Mac') && event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey)) &&
-                 event.code === 'Backslash') {
+        else if (isModifierCombo(event, 'cmd') && event.code === 'Backslash') {
             event.preventDefault();
             toggleActivityFeed();
         }
         // Check for SHIFT+N (Switch to Notes Tab in modal OR Scroll to Internal Notes on Job page)
-        else if (event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey && event.code === 'KeyN') {
-            // Don't trigger shortcut if user is typing in an input field
-            const activeElement = document.activeElement;
-            const isTypingInField = activeElement && (
-                activeElement.tagName === 'INPUT' ||
-                activeElement.tagName === 'TEXTAREA' ||
-                activeElement.tagName === 'SELECT' ||
-                activeElement.isContentEditable
-            );
-
-            if (isTypingInField) {
-                // User is typing in an input field, let the normal "N" character be typed
+        else if (isModifierCombo(event, 'shift') && event.code === 'KeyN') {
+            if (isUserTyping()) {
                 return;
             }
 
             // Check if Visit or Request modal is open first
-            const title = document.querySelector('.dialog-title.js-dialogTitle');
-            const titleText = normalizeText(title?.textContent || '');
+            const { isValid } = getVisitRequestDialog();
 
-            if (title && (titleText === 'visit' || titleText === 'request')) {
+            if (isValid) {
                 // We're in a modal - switch to Notes tab
                 event.preventDefault();
                 switchToNotesTab();
             } else {
-                // Check if we're on a job page - scroll to Internal Notes
-                const isJobPage = /\/work_orders\/\d+/.test(window.location.pathname);
+                // Check if we're on a job, invoice, or quote page - scroll to Internal Notes
+                const isOnSupportedPage = /\/(work_orders|invoices|quotes)\/\d+/.test(window.location.pathname);
 
-                if (isJobPage) {
+                if (isOnSupportedPage) {
                     event.preventDefault();
                     scrollToInternalNotesCard();
                 }
@@ -1029,44 +933,23 @@ While on Job, Invoice, or Quote pages:
             }
         }
         // Check for SHIFT+I (Switch to Info Tab)
-        else if (event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey && event.code === 'KeyI') {
-            // Don't trigger shortcut if user is typing in an input field
-            const activeElement = document.activeElement;
-            const isTypingInField = activeElement && (
-                activeElement.tagName === 'INPUT' ||
-                activeElement.tagName === 'TEXTAREA' ||
-                activeElement.tagName === 'SELECT' ||
-                activeElement.isContentEditable
-            );
-
-            if (isTypingInField) {
-                // User is typing in an input field, let the normal "I" character be typed
+        else if (isModifierCombo(event, 'shift') && event.code === 'KeyI') {
+            if (isUserTyping()) {
                 return;
             }
 
             // Only intercept if Visit or Request modal is open
-            const title = document.querySelector('.dialog-title.js-dialogTitle');
-            const titleText = normalizeText(title?.textContent || '');
+            const { isValid } = getVisitRequestDialog();
 
-            if (title && (titleText === 'visit' || titleText === 'request')) {
+            if (isValid) {
                 event.preventDefault();
                 switchToInfoTab();
             }
             // If modal is not open, let the default behavior happen (typing "I")
         }
         // Check for SHIFT+V (Scroll to Visits Card)
-        else if (event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey && event.code === 'KeyV') {
-            // Don't trigger shortcut if user is typing in an input field
-            const activeElement = document.activeElement;
-            const isTypingInField = activeElement && (
-                activeElement.tagName === 'INPUT' ||
-                activeElement.tagName === 'TEXTAREA' ||
-                activeElement.tagName === 'SELECT' ||
-                activeElement.isContentEditable
-            );
-
-            if (isTypingInField) {
-                // User is typing in an input field, let the normal "V" character be typed
+        else if (isModifierCombo(event, 'shift') && event.code === 'KeyV') {
+            if (isUserTyping()) {
                 return;
             }
 
@@ -1080,9 +963,7 @@ While on Job, Invoice, or Quote pages:
             // If not on job page, let the default behavior happen (typing "V")
         }
         // Check for CMD+ENTER (Save/Send) - Mac: CMD+Enter, Windows: CTRL+Enter
-        else if (event.code === 'Enter' && 
-         ((navigator.platform.includes('Mac') && event.metaKey && !event.altKey && !event.ctrlKey && !event.shiftKey) ||
-          (!navigator.platform.includes('Mac') && event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey))) {
+        else if (event.code === 'Enter' && isModifierCombo(event, 'cmd')) {
             event.preventDefault();
             
             // HIGHEST PRIORITY: Check for delete note confirmation dialog
@@ -1137,15 +1018,15 @@ While on Job, Invoice, or Quote pages:
     console.log('✅ JOBBER SHORTCUTS LOADED SUCCESSFULLY!');
     console.log('========================================');
     console.log('Available shortcuts:');
-    console.log('- CMD+CTRL+E: Open Edit Dialog');
-    console.log('- CMD+CTRL+T: Open Text Reminder Dialog');
-    console.log('- CMD+CTRL+A: Assign Crew (in Visit/Request modal)');
-    console.log('- CMD+?: Show shortcuts help modal');
-    console.log('- CMD+OPTION+\\: Toggle Text Message Inbox');
-    console.log('- CMD+\\: Toggle Activity Feed');
+    console.log(`- ${isMac ? 'CMD+CTRL+E' : 'CTRL+ALT+E'}: Open Edit Dialog`);
+    console.log(`- ${isMac ? 'CMD+CTRL+T' : 'CTRL+ALT+T'}: Open Text Reminder Dialog`);
+    console.log(`- ${isMac ? 'CMD+CTRL+A' : 'CTRL+ALT+A'}: Assign Crew (in Visit/Request modal)`);
+    console.log(`- ${isMac ? 'CMD+/' : 'CTRL+/'}: Show shortcuts help modal`);
+    console.log(`- ${isMac ? 'CMD+OPTION+\\' : 'CTRL+ALT+\\'}: Toggle Text Message Inbox`);
+    console.log(`- ${isMac ? 'CMD+\\' : 'CTRL+\\'}: Toggle Activity Feed`);
     console.log('- SHIFT+N: Switch to Notes Tab (in modal) OR Scroll to Internal Notes (on Job, Invoice, Quote pages)');
     console.log('- SHIFT+I: Switch to Info Tab (in Visit/Request modal)');
     console.log('- SHIFT+V: Scroll to Visits Card (on Job page)');
-    console.log('- CMD+ENTER: Click Save Button');
+    console.log(`- ${isMac ? 'CMD+ENTER' : 'CTRL+ENTER'}: Click Save Button`);
     console.log('========================================');
 })();
