@@ -142,9 +142,9 @@ While on Job, Invoice, or Quote pages:
             shortcuts: [
                 { combo: isMac ? 'COMMAND + CTRL + E' : 'CTRL + ALT + E', description: 'Open <strong>Edit</strong> dialog or click Edit in popover' },
                 { combo: isMac ? 'COMMAND + CTRL + T' : 'CTRL + ALT + T', description: 'Open <strong>Text</strong> Reminder dialog' },
+                { combo: isMac ? 'COMMAND + CTRL + A' : 'CTRL + ALT + A', description: '<strong>Assign</strong> crew' },
                 { combo: 'SHIFT + N', description: 'Switch to <strong>Notes</strong> tab' },
                 { combo: 'SHIFT + I', description: 'Switch to <strong>Info</strong> tab' },
-                { combo: isMac ? 'COMMAND + CTRL + A' : 'CTRL + ALT + A', description: '<strong>Assign</strong> crew' }
             ]
         },
         {
