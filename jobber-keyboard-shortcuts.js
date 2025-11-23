@@ -12,8 +12,8 @@ Global:
 - CMD + ENTER : Click Save Button (while in any Visit Modal, Note input, or email form.)
 - CMD + K : Show keyboard shortcuts reference
 
-While viewing a JOB VISIT Modal:
- - CMD + CTRL + E : Open visit Edit dialog
+While viewing a JOB VISIT Modal or Scheduler Popover:
+ - CMD + CTRL + E : Open visit Edit dialog (or click Edit in popover)
  - CMD + CTRL + T : Open Text Reminder dialog
  - SHIFT + N : Switch to Notes Tab
  - SHIFT + I : Switch to Info Tab
@@ -138,9 +138,9 @@ While on Job, Invoice, or Quote pages:
             ]
         },
         {
-            title: 'Visit / Request Modals',
+            title: 'Visit / Request Modals / Scheduler Popovers',
             shortcuts: [
-                { combo: isMac ? 'COMMAND + CTRL + E' : 'CTRL + ALT + E', description: 'Open visit Edit dialog' },
+                { combo: isMac ? 'COMMAND + CTRL + E' : 'CTRL + ALT + E', description: 'Open Edit dialog or click Edit in popover' },
                 { combo: isMac ? 'COMMAND + CTRL + T' : 'CTRL + ALT + T', description: 'Open Text Reminder dialog' },
                 { combo: 'SHIFT + N', description: 'Switch to Notes tab' },
                 { combo: 'SHIFT + I', description: 'Switch to Info tab' }
@@ -476,6 +476,37 @@ While on Job, Invoice, or Quote pages:
         openActionDialog('Edit', (text, href, id) => {
             return text.includes('edit') || /\/edit\.dialog\b/.test(href);
         });
+    }
+
+    // Function 1b: Click Edit button in Popover Modal (scheduler view)
+    function clickEditInPopover() {
+        // Look for an open popover with data-mode="view"
+        const popover = document.querySelector('div[data-testid="popover"][data-open="true"][data-mode="view"]');
+
+        if (!popover) {
+            return false; // No popover found
+        }
+
+        // Find the Edit button inside the popover
+        // Structure: ._buttonContainer_1dxlc_1 > ._button_1dxlc_1 > button > span (text: "Edit")
+        const buttonContainer = popover.querySelector('._buttonContainer_1dxlc_1');
+
+        if (!buttonContainer) {
+            return false;
+        }
+
+        // Find all buttons in the container and look for one with "Edit" text
+        const buttons = buttonContainer.querySelectorAll('button');
+        for (const button of buttons) {
+            const span = button.querySelector('span');
+            if (span && normalizeText(span.textContent) === 'edit') {
+                console.log('Edit button found in popover, clicking...');
+                button.click();
+                return true; // Successfully clicked
+            }
+        }
+
+        return false; // Edit button not found in popover
     }
 
     // Function 2: Open Text Reminder Dialog (CMD+CTRL+T)
@@ -886,7 +917,14 @@ While on Job, Invoice, or Quote pages:
         // Check for CMD+CTRL+E (Mac) or CTRL+ALT+E (Windows) - Edit
         if (isModifierCombo(event, 'cmd+ctrl') && event.code === 'KeyE') {
             event.preventDefault();
-            openEditDialog();
+
+            // First try clicking Edit button in popover (scheduler view)
+            const popoverHandled = clickEditInPopover();
+
+            // If no popover was found/handled, try the regular edit dialog
+            if (!popoverHandled) {
+                openEditDialog();
+            }
         }
         // Check for CMD+CTRL+T (Mac) or CTRL+ALT+T (Windows) - Text Reminder
         else if (isModifierCombo(event, 'cmd+ctrl') && event.code === 'KeyT') {
