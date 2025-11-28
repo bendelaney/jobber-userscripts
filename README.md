@@ -5,7 +5,7 @@ A userscript that adds powerful keyboard shortcuts to Jobber to speed up your wo
 ## Keyboard Shortcuts
 
 ### Global Shortcuts
-- **`CMD + K`** (Mac) or **`CTRL + K`** (Windows) - Show **keyboard shortcuts reference** modal
+- **`CMD + /`** (Mac) or **`CTRL + /`** (Windows) - Show **keyboard shortcuts reference** modal
 - **`CMD + \`** (Mac) or **`CTRL + \`** (Windows) - Toggle **Activity Feed** side panel
 - **`CMD + OPTION + \`** (Mac) or **`CTRL + ALT + \`** (Windows) - Toggle **Messages** side panel
 - **`CMD + ENTER`** (Mac) or **`CTRL + ENTER`** (Windows) - Click **Save** Button (works in Visit Modals, Note inputs, and email forms)
@@ -23,63 +23,43 @@ A userscript that adds powerful keyboard shortcuts to Jobber to speed up your wo
 
 ## Installation
 
-### 1️⃣ Step 1: Install Userscript Extension
+### 1️⃣ Step 1: Install a Userscript Extension/Add-on
 
-#### For Mac Users:
+#### For APPLE / MAC USERS:
 Install browser extension:<br/>
 - **Safari**: 
-   - [Userscripts (App Store - free)](https://apps.apple.com/us/app/userscripts/id1463298887)
-   - [Tampermonkey (App Store - $2.99)](https://apps.apple.com/us/app/tampermonkey/id6738342400)
+   - [Userscripts (App Store--free) (recommended)](https://apps.apple.com/us/app/userscripts/id1463298887)
+   - [Tampermonkey (App Store--$2.99)](https://apps.apple.com/us/app/tampermonkey/id6738342400)
 - **Chrome**: [Tampermonkey (Chrome Web Store)](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
 - **Firefox**: [Tampermonkey (Firefox Add-ons)](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)
 
-#### For Windows Users (Chrome/Firefox/Edge):
+#### For MICROSOFT / WINDOWS Users (Chrome/Firefox/Edge):
 Install [Tampermonkey](https://www.tampermonkey.net/) browser extension:
 - **Chrome**: [Chrome Web Store](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
 - **Firefox**: [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)
 - **Edge**: [Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd)
 
-### 2️⃣ Step 2: Create New Userscript
+### 1️⃣🅱️ ⚠️ IMPORTANT STEP For WINDOWS users:
+1. Right-click the Tampermonkey icon in your browser toolbar
+2. Choose "Manage Extension"
+![Screenshot of Userscripts auto-install](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/manage-extension.png)
 
-#### Auto-install option (recommended):
-1. Make sure your extension from Step 1 is turned ON.
-2. Visit this: [install link](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/jobber-keyboard-shortcuts-userscript.user.js)
-3. _While on that page_:
+3. Toggle ON two settings: "Developer Mode" (in the upper right) and "Allow User Scripts"
+![Screenshot of Userscripts auto-install](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/settings-to-turn-on.png)
+
+
+### 2️⃣ Step 2: Install the Userscript
+
+1. Visit the install page (read #2 below first): [👉🏼CLICK HERE👈🏼](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/jobber-keyboard-shortcuts-userscript.user.js)
+2. _**While on that page**_:
    - **For Safari/Userscripts**: Click the Userscripts icon in browser (looks like **"</>"**), then click **"Click to install"**
-   - **For Tampermonkey**: Tampermonkey should automatically detect the userscript and show an 'installation page'. Click **Install** button.
+   ![Screenshot of Userscripts auto-install](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/userscripts-install.png)
 
-![Screenshot of Userscripts auto-install](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/userscripts-install.png)
+   - **For Tampermonkey**: Tampermonkey will automatically detect the userscript and show an 'installation page' near the top. Click **Install** button.
+   ![Screenshot of Userscripts auto-install](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/tampermonkey-install.png)
 
-#### Manual install option:
-##### For Safari/Userscripts:
-1. Open the script in a new tab and COPY full contents <a href="https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/jobber-keyboard-shortcuts-userscript.user.js" target="_blank">Click here to open</a>
-2. Click the Userscripts extension icon in Safari toolbar
-3. Click the "Open Extension Page" link
-4. Click the **+** button, then "New JS" to create a new userscript
-5. Give it a name like "Jobber Keyboard Shortcuts"
-6. PASTE the contents of the script
 
-![Screenshot of manual Userscripts install](https://github.com/bendelaney/jobber-userscripts/blob/main/userscripts-manual-install.jpg?raw=true)
 
-##### For Tampermonkey:
-1. Click the Tampermonkey icon in your browser toolbar
-2. Click **"Create a new script..."**
-3. Delete the default template
-4. Open the script and COPY full contents <a href="https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/jobber-keyboard-shortcuts-userscript.user.js" target="_blank">Click here to open</a>
-5. PASTE the contents into the Tampermonkey editor
-6. Click **File → Save** (or press CTRL+S)
-
-### Step 4: Save and Enable
-1. Save the userscript
-2. Make sure it's enabled (toggle should be on)
-3. Refresh your Jobber page
-
-### Step 5: Verify Installation
-1. Open your browser's JavaScript console:
-   - **Mac (Safari)**: Option + CMD + C
-   - **Windows (Chrome/Firefox/Edge)**: F12 or CTRL + SHIFT + I, then click "Console" tab
-2. You should see console messages listing all available keyboard shortcuts
-3. Try a keyboard shortcut to confirm it's working!
 
 ## Updates
 
