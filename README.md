@@ -42,10 +42,12 @@ Install [Tampermonkey](https://www.tampermonkey.net/) browser extension:
 ### 1️⃣🅱️ ⚠️ IMPORTANT STEP For WINDOWS users:
 1. Right-click the Tampermonkey icon in your browser toolbar
 2. Choose "Manage Extension"
-![Screenshot of Userscripts auto-install](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/manage-extension.png)
+<p style="text-align:left"><img src="https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/manage-extension.png" alt="Screenshot of Tampermonkey context menu" style="max-width: 400px; width: 50%;"></p>
 
 3. Toggle ON two settings: "Developer Mode" (in the upper right) and "Allow User Scripts"
-![Screenshot of Userscripts auto-install](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/settings-to-turn-on.png)
+![Screenshot of Settings to turn on](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/settings-to-turn-on.png)
+4. Return to Jobber. 
+[https://secure.getjobber.com](https://secure.getjobber.com). If it's working, you'll see a red number on the Tampermonkey icon. 
 
 
 ### 2️⃣ Step 2: Install the Userscript
@@ -56,7 +58,7 @@ Install [Tampermonkey](https://www.tampermonkey.net/) browser extension:
    ![Screenshot of Userscripts auto-install](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/userscripts-install.png)
 
    - **For Tampermonkey**: Tampermonkey will automatically detect the userscript and show an 'installation page' near the top. Click **Install** button.
-   ![Screenshot of Userscripts auto-install](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/tampermonkey-install.jpeg)
+   ![Screenshot of Tampermonkey auto-install](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/tampermonkey-install.jpeg)
 
 
 
