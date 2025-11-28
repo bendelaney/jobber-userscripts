@@ -56,7 +56,7 @@ Install [Tampermonkey](https://www.tampermonkey.net/) browser extension:
    ![Screenshot of Userscripts auto-install](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/userscripts-install.png)
 
    - **For Tampermonkey**: Tampermonkey will automatically detect the userscript and show an 'installation page' near the top. Click **Install** button.
-   ![Screenshot of Userscripts auto-install](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/tampermonkey-install.png)
+   ![Screenshot of Userscripts auto-install](https://raw.githubusercontent.com/bendelaney/jobber-userscripts/refs/heads/main/tampermonkey-install.jpeg)
 
 
 
@@ -68,9 +68,10 @@ When this userscript is updated, you don't need to do anything! The loader autom
 ## Troubleshooting
 
 **Shortcuts aren't working:**
+- Check that you are "in" the Jobber window - click anywhere to make sure that window is the active one. 
+- Try refreshing the page
 - Check the browser console for error messages
 - Make sure the userscript is enabled in the Userscripts extension
-- Try refreshing the page
 
 **Script not loading:**
 - Check your internet connection
